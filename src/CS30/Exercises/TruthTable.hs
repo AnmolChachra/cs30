@@ -144,7 +144,7 @@ parseExpr' x = parse parserExpression "<myparse>" (filter (\c->c/=' ') x)
 
 getExpr :: Either ParseError Expression -> Expression -- TODO : Make exhaustive
 getExpr (Right x) = x
-getExpr (Left x) = ExpressionError
+getExpr (Left _) = ExpressionError
 
 -- Converts an expression object to a string
 showExpr :: Expression -> String
@@ -225,9 +225,12 @@ fromTruthTable (TruthTable ttHeader ttBody)
 toTruthTable :: Field -> TruthTable
 toTruthTable (FTable fTable) = TruthTable ttHeader ttBody
                                where headerToExpr (Header (FText x)) = parseExpr x
+                                     headerToExpr _ = ExpressionError
                                      cellToBool (Cell (FText x)) = x == [charTrue]
+                                     cellToBool _ = False
                                      ttHeader = map headerToExpr (head fTable)
                                      ttBody = map (\ftBodyRow -> map cellToBool ftBodyRow) (take 1 fTable)
+toTruthTable _ = TruthTable [] []
 
 --------------------------------------Truth Table Helpers-------------------------------------------
 
